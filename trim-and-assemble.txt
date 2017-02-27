@@ -1,0 +1,40 @@
+gunzip -c ecoli_ref-5m.fastq.gz | split-paired-reads.py -1 R1.fq -2 R2.fq
+
+Trimmomatic:
+TrimmomaticPE R1.fq R2.fq trimmed.R1.fq single.R1.fq trimmed.R2.fq single.R2.fq ILLUMINACLIP:TruSeq3-PE.fa:2:40:15 LEADING:2 TRAILING:2 SLIDINGWINDOW:4:2 MINLEN:25
+
+interleave-reads.py trimmed.R1.fq trimmed.R2.fq > trimmed-ecoli.fq
+
+Megahit:
+~/megahit/megahit --12 trimmed-ecoli.fq -r single.R1.fq -r single.R2.fq -o ecoli
+
+cp ecoli/final.contigs.fa ecoli-assembly.fa
+
+Quast:
+python2.7 ~/quast/quast.py ecoli-assembly.fa -o ecoli_report
+
+Results & Conclusions:
+Assembly                    ecoli-assembly
+# contigs (>= 0 bp)         117           
+# contigs (>= 1000 bp)      91            
+# contigs (>= 5000 bp)      69            
+# contigs (>= 10000 bp)     64            
+# contigs (>= 25000 bp)     52            
+# contigs (>= 50000 bp)     32            
+Total length (>= 0 bp)      4577356       
+Total length (>= 1000 bp)   4565024       
+Total length (>= 5000 bp)   4508189       
+Total length (>= 10000 bp)  4470978       
+Total length (>= 25000 bp)  4296011       
+Total length (>= 50000 bp)  3578706       
+# contigs                   101           
+Largest contig              246618        
+Total length                4571902       
+GC (%)                      50.74         
+N50                         105709        
+N75                         53842         
+L50                         15            
+L75                         30            
+# N's per 100 kbp           0.00 
+
+There is hardly any difference in my results and the untrimmed results. The N50 is one base longer. This could just be due to the fact that the ecoli genome is fairly small so there's less room for errors in sequencing, etc.
