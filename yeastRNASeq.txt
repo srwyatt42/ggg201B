@@ -1,0 +1,42 @@
+#Code:
+#Get edgeR
+git clone https://github.com/ctb/2017-ucdavis-igg201b.git
+sudo Rscript --no-save ~/2017-ucdavis-igg201b/lab7/install-edgeR.R
+#Get salmon:
+curl -L -O https://github.com/COMBINE-lab/salmon/releases/download/v0.8.0/Salmon-0.8.0_linux_x86_64.tar.gz
+tar xzf Salmon-0.8.0_linux_x86_64.tar.gz
+export PATH=$PATH:$HOME/Salmon-latest_linux_x86_64/bin
+#Get Data:
+mkdir yeast
+cd yeast
+curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/ERR458500/ERR458500.fastq.gz
+curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/ERR458501/ERR458501.fastq.gz
+curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/ERR458502/ERR458502.fastq.gz
+curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/ERR458503/ERR458503.fastq.gz
+curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/ERR458504/ERR458504.fastq.gz
+#
+curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/ERR458493/ERR458493.fastq.gz
+curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/ERR458494/ERR458494.fastq.gz
+curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/ERR458495/ERR458495.fastq.gz
+curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/ERR458496/ERR458496.fastq.gz
+curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/ERR458497/ERR458497.fastq.gz
+#
+curl -O http://downloads.yeastgenome.org/sequence/S288C_reference/orf_dna/orf_coding.fasta.gz
+#Index reference:
+salmon index --index yeast_orfs --type quasi --transcripts orf_coding.fasta.gz
+#Run salmon:
+for i in *.fastq.gz
+do
+salmon quant -i yeast_orfs --libType U -r $i -o $i.quant --seqBias --gcBias
+done
+#Collect counts:
+curl -L -O https://github.com/ngs-docs/2016-aug-nonmodel-rnaseq/raw/master/files/gather-counts.py
+python2 gather-counts.py
+#Edit yeast.salmon.R
+#Add in my relevant files to 'files' variable
+#Add in two more labels
+#group changed to reflect 5 mutant and wt
+#Run edgeR:
+Rscript --no-save ~/2017-ucdavis-igg201b/lab8/yeast.salmon.R
+#Conclusions
+#
