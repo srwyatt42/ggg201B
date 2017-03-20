@@ -39,4 +39,4 @@ python2 gather-counts.py
 #Run edgeR:
 Rscript --no-save ~/2017-ucdavis-igg201b/lab8/yeast.salmon.R
 #Conclusions
-#
+#Based on pvalue, there are approximately 120 more significantly expressed genes in my csv file than the lab 8 csv file. This is most likely entirely due to the additional mut files. I expected there to be a more significant genes with the addition of more mutant data. Since I didn't change any other parameters in the Rscript, I also expected to have the same number of lines output.
